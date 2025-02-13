@@ -25,7 +25,7 @@ RUN gem install fpm && \
 # Set working directory
 WORKDIR /build
 
-# Add entrypoint script with fixed argument handling
+# Add entrypoint script
 COPY <<EOF /entrypoint.sh
 #!/bin/bash
 set -e
@@ -40,12 +40,11 @@ else
     git submodule update --init --recursive
 fi
 
-# Start bash if no command provided
-if [ -z "\${1}" ]; then
+# Simple command handling
+if [ $# -eq 0 ]; then
     /bin/bash
 else
-    # Execute the provided command
-    "\$@"
+    sh -c "$*"
 fi
 EOF
 
