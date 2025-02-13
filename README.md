@@ -1,56 +1,30 @@
 # Radxa BSP Builder Container
 
-This container provides a build environment for the Radxa Board Support Package (BSP), focusing on U-Boot and Linux kernel compilation for Radxa single-board computers.
-
-## Technical Overview
-
-- Base Image: Debian Bullseye
-- Architecture Support: ARM64 cross-compilation
-- Key Components:
-  - Cross-compilation toolchain
-  - U-Boot build dependencies
-  - Linux kernel build dependencies
-  - Python 2 & 3 environments
-  - FPM for package building
-
-## Container Registry
-
-The container is available on GitHub Container Registry (GHCR):
-```
-ghcr.io/godspoon/radxa_bsp:latest
-```
+Debian-based container for building Radxa Board Support Package (BSP), supporting U-Boot and Linux kernel compilation for Radxa single-board computers.
 
 ## Usage
 
-### Pull the Container
+### Pull Container
 ```bash
 podman pull ghcr.io/godspoon/radxa_bsp:latest
 ```
 
 ### Run Interactive Shell
 ```bash
-podman run -it --rm -v "$(pwd)":/build ghcr.io/godspoon/radxa_bsp:latest
+podman run -it --rm ghcr.io/godspoon/radxa_bsp:latest /bin/bash
 ```
 
 ### Build U-Boot for Radxa Zero
 ```bash
-podman run -it --rm -v "$(pwd)":/build ghcr.io/godspoon/radxa_bsp:latest ./bsp u-boot latest radxa-zero
+podman run -it --rm ghcr.io/godspoon/radxa_bsp:latest /build/bsp/bsp u-boot latest radxa-zero
 ```
 
-### Build with Local BSP Directory
+### Mount Local Directory (Optional)
 ```bash
-podman run -it --rm -v "$(pwd)":/build ghcr.io/godspoon/radxa_bsp:latest
+podman run -it --rm -v /path/to/local/dir:/build/output ghcr.io/godspoon/radxa_bsp:latest /bin/bash
 ```
 
-### Override Entrypoint (for debugging)
-```bash
-podman run -it --rm --entrypoint /bin/bash ghcr.io/godspoon/radxa_bsp:latest
-```
-
-## Building Locally
-
-To build the container locally:
-
+## Build Container Locally
 ```bash
 git clone https://github.com/GodSpoon/radxa_bsp.git
 cd radxa_bsp
@@ -62,14 +36,7 @@ podman build -t ghcr.io/godspoon/radxa_bsp:latest .
 podman push ghcr.io/godspoon/radxa_bsp:latest
 ```
 
-## Environment Variables
-
-The container respects the following environment variables:
-- `CROSS_COMPILE`: Set to `aarch64-linux-gnu-` by default
-- `ARCH`: Set to `arm64` for kernel builds
-
 ## Notes
-
-- The container automatically clones the BSP repository if not mounted
-- All build artifacts are created in the mounted `/build` directory
-- The container runs with the default entrypoint that handles BSP repository setup
+- Container includes pre-cloned BSP repository
+- ARM64 cross-compilation toolchain pre-installed
+- Build artifacts created in container unless mounted volume specified
