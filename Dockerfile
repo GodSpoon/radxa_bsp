@@ -9,7 +9,7 @@ RUN apt-get update && \
         python3 python2 python-is-python2 curl debhelper \
         python3-distutils python3-pkg-resources python3-setuptools python3-pyelftools python3-ply python3-git \
         cpio bc flex fakeroot bison rsync kmod swig device-tree-compiler u-boot-tools \
-        python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev wget
+        python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev
 
 RUN dpkg --add-architecture arm64 && \
     apt-get update && \
@@ -25,29 +25,7 @@ RUN gem install fpm && \
 # Set working directory
 WORKDIR /build
 
-# Add entrypoint script
-COPY <<EOF /entrypoint.sh
-#!/bin/bash
-set -e
+# Clone BSP repository
+RUN git clone --recurse-submodules https://github.com/radxa-repo/bsp.git
 
-# Clone BSP repository if not mounted
-if [ ! -d "/build/bsp" ]; then
-    git clone --recurse-submodules https://github.com/radxa-repo/bsp.git
-    cd bsp
-else
-    cd bsp
-    # Update submodules if directory is mounted
-    git submodule update --init --recursive
-fi
-
-# Simple command handling
-if [ $# -eq 0 ]; then
-    /bin/bash
-else
-    sh -c "$*"
-fi
-EOF
-
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+WORKDIR /build/bsp
