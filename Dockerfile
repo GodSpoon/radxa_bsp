@@ -42,10 +42,12 @@ else
     git submodule update --init --recursive
 fi
 
-# Execute build command or drop to shell
+# Check if any arguments were passed
 if [ $# -eq 0 ]; then
+    # No arguments - start an interactive shell
     exec /bin/bash
 else
+    # Arguments provided - execute the command
     exec "$@"
 fi
 EOF
