@@ -57,6 +57,11 @@ cd radxa_bsp
 podman build -t ghcr.io/godspoon/radxa_bsp:latest .
 ```
 
+## Push New Build
+```bash
+podman push ghcr.io/godspoon/radxa_bsp:latest
+```
+
 ## Environment Variables
 
 The container respects the following environment variables:
