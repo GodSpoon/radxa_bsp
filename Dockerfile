@@ -9,9 +9,7 @@ RUN apt-get update && \
         python3 python2 python-is-python2 curl debhelper \
         python3-distutils python3-pkg-resources python3-setuptools python3-pyelftools python3-ply python3-git \
         cpio bc flex fakeroot bison rsync kmod swig device-tree-compiler u-boot-tools \
-        python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev wget nano 
-        # Note: python3-cryptography causes build failure for U-Boot latest,
-        # but is required for U-Boot mediatek
+        python2-dev python3-dev libssl-dev uuid-dev libgnutls28-dev wget
 
 RUN dpkg --add-architecture arm64 && \
     apt-get update && \
@@ -27,7 +25,7 @@ RUN gem install fpm && \
 # Set working directory
 WORKDIR /build
 
-# Add entrypoint script
+# Add entrypoint script with fixed argument handling
 COPY <<EOF /entrypoint.sh
 #!/bin/bash
 set -e
@@ -42,13 +40,12 @@ else
     git submodule update --init --recursive
 fi
 
-# Check if any arguments were passed
-if [ $# -eq 0 ]; then
-    # No arguments - start an interactive shell
-    exec /bin/bash
+# Start bash if no command provided
+if [ -z "\${1}" ]; then
+    /bin/bash
 else
-    # Arguments provided - execute the command
-    exec "$@"
+    # Execute the provided command
+    "\$@"
 fi
 EOF
 
